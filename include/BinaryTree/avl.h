@@ -5,9 +5,7 @@
 #ifndef LAB_AVL_H
 #define LAB_AVL_H
 
-//TODO: Lot of scope of improvement in way balance factors as handled and updated.
 //TODO: Properly Handle deleting node with 2 children.
-//TODO: Scope of improvements in rotation code and how balance factor is updated after rotation.
 
 #include "avl_node.h"
 
@@ -338,10 +336,8 @@ void AVLTree<T>::deleteElement(AVLNode<T> *node) {
     else{
         AVLNode<T>* predecessor = findPredecessor(node);
         AVLNode<T>* parent = predecessor -> getParent();
-
         node ->setData(predecessor -> getData());
         deleteElement(predecessor);
-
     }
 
     delete node;
