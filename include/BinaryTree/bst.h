@@ -1,35 +1,74 @@
 #ifndef BST_H
 #define BST_H
 
-#include "node.h"
+#include "bst_node.h"
+#include "../Queue/Queue.h"
 
 template <typename T>
 class BinarySearchTree{
     private:
-        Node<T>* root;
+        BSTNode<T>* root;
 
-        Node<T>* max(Node<T>*);
-        Node<T>* min(Node<T>*);
-        Node<T>* findSuccessor(Node<T>*);
-        Node<T>* findPredecessor(Node<T>*);
+        BSTNode<T>* max(BSTNode<T>*);
+        BSTNode<T>* min(BSTNode<T>*);
+        BSTNode<T>* findSuccessor(BSTNode<T>*);
+        BSTNode<T>* findPredecessor(BSTNode<T>*);
     public:
 
 
         BinarySearchTree() : root(NULL){ }
-        BinarySearchTree(Node<T>* r) : root(r){ }
+        BinarySearchTree(BSTNode<T>* r) : root(r){ }
 
         void addElement(T);
         void addElement(T*,int);
-        Node<T>* getParent(Node<T>*);
-        Node<T>* search(T);
+        BSTNode<T>* getParent(BSTNode<T>*);
+        BSTNode<T>* search(T);
 
         void deleteNode(T);
-        void deleteNode(Node<T>*);
+        void deleteNode(BSTNode<T>*);
 
         void inOrder();
         void postOrder();
         void preOrder();
+
+        void breadthFirst(bool=false);
 };
+
+/*!
+ * @brief traverses tree from left to right (right to left), top to bottom
+ * @param right_to_left 0/false: Print left to right\n1/true print right to left\nDefault false/0
+ * @throws std::runtime_error when tree is not initialised. i.e. tree is empty
+ */
+
+template<typename T>
+void BinarySearchTree<T>::breadthFirst(bool right_to_left) {
+
+    if(root == NULL)
+        throw std::runtime_error("No root exist.");
+
+    Queue<BSTNode<T>*> element;
+    /* for tree
+     *                             30
+     *                  25                    40
+     *              20        27         35          45
+     *          10     22  26    28   31    37    42    50
+     *
+     * Breadth first traversal would look like
+     *         30,25,40,20,27,35,45,10,22,26,28,31,37,42,50
+     */
+    element.enqueue(root);
+    while(!element.isEmpty()){
+        BSTNode<T>* tmp = element.dequeue();
+        std::cout << tmp -> getData() << ", ";
+        if(tmp -> getRightChild() && right_to_left)
+            element.enqueue(tmp->getRightChild());
+        if(tmp -> getLeftChild())
+            element.enqueue(tmp->getLeftChild());
+        if(tmp -> getRightChild() && !right_to_left)
+            element.enqueue(tmp->getRightChild());
+    }
+
+}
 
 /*!
  * @brief Adds given element to binary search tree.
@@ -39,15 +78,15 @@ class BinarySearchTree{
 template <typename T>
 void BinarySearchTree<T>::addElement(T elem){
     if(root == NULL){ //if tree is not initialised. Initialise it i.e. assign element as root of tree.
-        root = new Node<T>(elem);
+        root = new BSTNode<T>(elem);
     }
     else{ //if tree is initialised. Search appropriate node that can be parent of given element
-        Node<T>* tmp = root;
+        BSTNode<T>* tmp = root;
         while(true){
             if(elem > tmp -> getData()){ //elem is greater than 'tmp'. search in right subtree
                 //if tmp has no right subtree. make elem child of elem.
                 if(tmp -> getRightChild() == NULL){
-                    tmp -> setRightChild(new Node<T>(elem));
+                    tmp -> setRightChild(new BSTNode<T>(elem));
                     break;
                 }
                 else{
@@ -57,7 +96,7 @@ void BinarySearchTree<T>::addElement(T elem){
             else{// elem is smaller than 'tmp' search in left subtree
                 //if tmp has no left subtree. make elem child of tmp
                 if(tmp -> getLeftChild() == NULL){
-                    tmp -> setLeftChild(new Node<T>(elem));
+                    tmp -> setLeftChild(new BSTNode<T>(elem));
                     break;
                 }
                 else{
@@ -87,7 +126,7 @@ void BinarySearchTree<T>::addElement(T* elem,int s){
  * @throws std::runtime_error in case of tree has no nodes
  */
 template <typename T>
-Node<T>* BinarySearchTree<T>::getParent(Node<T> *child){
+BSTNode<T>* BinarySearchTree<T>::getParent(BSTNode<T> *child){
 
     if(root == NULL){ //check if tree has elements.
         throw std::runtime_error("Root is NULL");
@@ -97,7 +136,7 @@ Node<T>* BinarySearchTree<T>::getParent(Node<T> *child){
         return NULL;
     }
 
-    Node<T>* tmp = root;
+    BSTNode<T>* tmp = root;
     /*
      * while loop will stop when "child" node is child of tmp.
      * OR
@@ -111,7 +150,7 @@ Node<T>* BinarySearchTree<T>::getParent(Node<T> *child){
         else if(child -> getData() > tmp -> getData()){ //else search in right subree.
             tmp = tmp -> getRightChild();
         }
-        /* Node:
+        /* BSTNode:
          * tmp will automatically become NULL incase,
          *      i)  child is smaller than tmp but tmp do not have any left subtree
          *      ii) child is greather than tmp but tmp do not have any right subtree
@@ -128,12 +167,12 @@ Node<T>* BinarySearchTree<T>::getParent(Node<T> *child){
  * @throws std::runtime_error in case of tree has no nodes
  */
 template <typename T>
-Node<T>* BinarySearchTree<T>::search(T elem){
+BSTNode<T>* BinarySearchTree<T>::search(T elem){
 
     if(root == NULL){ //Check if tree is initialised
         throw std::runtime_error("Root is NULL");
     }
-    Node<T>* tmp = root;
+    BSTNode<T>* tmp = root;
     while(tmp != NULL && tmp -> getData() != elem){ //traverse the tree
         if(elem <= tmp -> getData()){ //if element to be searched is less than root
             tmp = tmp -> getLeftChild(); // search in left subtree
@@ -150,7 +189,7 @@ Node<T>* BinarySearchTree<T>::search(T elem){
 }
 
 template <typename T>
-Node<T>* BinarySearchTree<T>::findSuccessor(Node<T> *node){
+BSTNode<T>* BinarySearchTree<T>::findSuccessor(BSTNode<T> *node){
     if (node -> getRightChild() != NULL){ //if there is rightChild of current node
         return min(node -> getRightChild()); //find minimum, i.e. left most node of that subtree.
     }
@@ -167,8 +206,8 @@ Node<T>* BinarySearchTree<T>::findSuccessor(Node<T> *node){
      * and when we stop, parent of current node will be predecessor
      */
 
-    Node<T>* parent = getParent(node);
-    Node<T>* current = node;
+    BSTNode<T>* parent = getParent(node);
+    BSTNode<T>* current = node;
 
     while(parent != NULL && parent -> getRightChild() == current){ //we will loop till current is right child of parent
         current = parent; //if parent is right child of current. assign current as parent and repeat.
@@ -179,7 +218,7 @@ Node<T>* BinarySearchTree<T>::findSuccessor(Node<T> *node){
 }
 
 template <typename T>
-Node<T>* BinarySearchTree<T>::findPredecessor(Node<T> *node){ //finds predecessor.
+BSTNode<T>* BinarySearchTree<T>::findPredecessor(BSTNode<T> *node){ //finds predecessor.
     if (node -> getLeftChild() != NULL){ //if node has left child find maximum of that subtree.
         return max(node -> getLeftChild());
     }
@@ -197,8 +236,8 @@ Node<T>* BinarySearchTree<T>::findPredecessor(Node<T> *node){ //finds predecesso
      */
 
 
-    Node<T>* parent = getParent(node);
-    Node<T>* current = node;
+    BSTNode<T>* parent = getParent(node);
+    BSTNode<T>* current = node;
 
     while(parent != NULL && parent -> getLeftChild() == current){ //we will loop till current is left child of parent
         current = parent; //if parent is left child of current. assign current as parent and repeat.
@@ -209,8 +248,8 @@ Node<T>* BinarySearchTree<T>::findPredecessor(Node<T> *node){ //finds predecesso
 }
 
 template <typename T>
-Node<T>* BinarySearchTree<T>::max(Node<T> *node){ //returns node with maximum value of tree rooted at 'node'
-    Node<T>* maxNode = node;
+BSTNode<T>* BinarySearchTree<T>::max(BSTNode<T> *node){ //returns node with maximum value of tree rooted at 'node'
+    BSTNode<T>* maxNode = node;
     while(maxNode -> getRightChild() != NULL){ //loops till maxNode has right child i.e. till rightmost most node.
         maxNode = maxNode -> getRightChild();
     }
@@ -218,8 +257,8 @@ Node<T>* BinarySearchTree<T>::max(Node<T> *node){ //returns node with maximum va
 }
 
 template <typename T>
-Node<T>* BinarySearchTree<T>::min(Node<T> *node){ //returns node with minimum value of tree rooted at 'node'
-    Node<T>* minNode = node;
+BSTNode<T>* BinarySearchTree<T>::min(BSTNode<T> *node){ //returns node with minimum value of tree rooted at 'node'
+    BSTNode<T>* minNode = node;
     while(minNode -> getLeftChild() != NULL){ //loops till minNode has left child i.e. till left most node.
         minNode = minNode -> getLeftChild();
     }
@@ -259,7 +298,7 @@ void BinarySearchTree<T>::preOrder(){ // visits nodes in tree in order parent-le
 
 template <typename T>
 void BinarySearchTree<T>::deleteNode(T val){ //searches and delete node with given value.
-    Node<T>* toBeDeleted = search(val);
+    BSTNode<T>* toBeDeleted = search(val);
     if(toBeDeleted != NULL)
         deleteNode(search(val)); //calls deleteNode function after finding node via search function
     else //raise exception if supplied node to not exists in binary search tree.
@@ -272,11 +311,11 @@ void BinarySearchTree<T>::deleteNode(T val){ //searches and delete node with giv
  */
 
 template <typename T>
-void BinarySearchTree<T>::deleteNode(Node<T>* node){ //deletes node pointed by given pointer
+void BinarySearchTree<T>::deleteNode(BSTNode<T>* node){ //deletes node pointed by given pointer
     int childs = ((node -> getLeftChild() != NULL) ? 1 : 0) + ((node -> getRightChild() != NULL) ? 1 : 0);
 
     if(childs == 0){ //if node to be deleted has no child, i.e. node is leaf
-        Node<T> * parent = getParent(node); //Gets Parent, to update pointers and remove address of deleted node
+        BSTNode<T> * parent = getParent(node); //Gets Parent, to update pointers and remove address of deleted node
 
         if(parent -> getLeftChild() == node) //if node to be deleted is left child of parent then update parent's left child's pointer
             parent ->setLeftChild(NULL);
@@ -284,7 +323,7 @@ void BinarySearchTree<T>::deleteNode(Node<T>* node){ //deletes node pointed by g
             parent ->setRightChild(NULL);
     }
     else if(childs == 1){ //if node be deleted has exactly 1 child
-        Node<T> * parent = getParent(node); //Gets Parent of Node, to promote it's grandchild to child
+        BSTNode<T> * parent = getParent(node); //Gets Parent of BSTNode, to promote it's grandchild to child
 
         /*
          * this code works on fact that node has exactly one child. If it is not in right side then it
@@ -322,7 +361,7 @@ void BinarySearchTree<T>::deleteNode(Node<T>* node){ //deletes node pointed by g
         /* here node is replaced by predecessor, which is rightmost node
          * of left subtree.
          */
-        Node<T>* predecessor = node -> getLeftChild(), *predecessorParent = node;
+        BSTNode<T>* predecessor = node -> getLeftChild(), *predecessorParent = node;
 
         /*
          * while loop will run till predecessor has no right child

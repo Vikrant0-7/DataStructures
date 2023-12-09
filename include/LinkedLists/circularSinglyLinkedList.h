@@ -5,7 +5,7 @@ template <typename T>
 class CircularList : public List<T>
 {
 private:
-    Node<T> *last;
+    BSTNode<T> *last;
 
 public:
     CircularList();
@@ -84,7 +84,7 @@ T CircularList<T>::deleteHead()
     else
     {
         T data = last->next->data;
-        Node<T>* head = last->next;
+        BSTNode<T>* head = last->next;
         last->next = head->next;
         delete head;
         return data;
@@ -107,7 +107,7 @@ T CircularList<T>::deleteTail()
     }
     else{
         T data = last -> data;
-        Node<T>* tmp = last -> next;
+        BSTNode<T>* tmp = last -> next;
         for(;tmp -> next != last; tmp = tmp -> next);
         last = tmp;
         tmp = last -> next;
@@ -119,7 +119,7 @@ T CircularList<T>::deleteTail()
 
 template <typename T>
 int CircularList<T>::search(T elem){
-        Node<T>* tmp = last -> next;
+        BSTNode<T>* tmp = last -> next;
         int counter = 0;
         for(;tmp -> next != last -> next; tmp = tmp -> next){
             if(tmp -> data == elem){
@@ -144,10 +144,10 @@ bool CircularList<T>::deleteElement(T elem){
         return false;
     }
     else{
-        Node<T>* tmp = last;
+        BSTNode<T>* tmp = last;
         do{
             if(tmp -> next -> data == elem){
-                Node<T>* head = tmp->next;
+                BSTNode<T>* head = tmp->next;
                 tmp->next = head->next;
                 delete head;
                 return true;
@@ -162,7 +162,7 @@ template <typename T>
 void CircularList<T>::print(){
     if(last == 0)
         return;
-    Node<T>* tmp = last -> next;
+    BSTNode<T>* tmp = last -> next;
     do{
         std::cout << tmp -> data << ", ";
         tmp = tmp -> next;

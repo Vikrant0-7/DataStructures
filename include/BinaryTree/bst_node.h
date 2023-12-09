@@ -1,25 +1,25 @@
-#ifndef NODE_H
-#define NODE_H
+#ifndef BST_NODE_H
+#define BST_NODE_H
 
 #include <iostream>
 
 template <typename T>
-class Node{
+class BSTNode{
 
     private:    
         T data;
-        Node* leftChild;
-        Node* rightChild;
+        BSTNode* leftChild;
+        BSTNode* rightChild;
 
     public:
 
-        Node(T);
+        BSTNode(T);
 
-        inline void setLeftChild(Node*);
-        inline void setRightChild(Node*);
+        inline void setLeftChild(BSTNode*);
+        inline void setRightChild(BSTNode*);
 
-        inline Node* getLeftChild();
-        inline Node* getRightChild();
+        inline BSTNode* getLeftChild();
+        inline BSTNode* getRightChild();
 
         inline T getData();
         inline void setData(T);
@@ -31,43 +31,43 @@ class Node{
 };
 
 template <typename T>
-Node<T>::Node(T data){
+BSTNode<T>::BSTNode(T data){
     this -> data = data;
     leftChild = rightChild = NULL;
 }
 
 template <typename T>
-void Node<T>::setLeftChild(Node* l){
+void BSTNode<T>::setLeftChild(BSTNode* l){
     this -> leftChild = l;
 }
 
 template <typename T>
-void Node<T>::setRightChild(Node* r){
+void BSTNode<T>::setRightChild(BSTNode* r){
     this -> rightChild = r;
 }
 
 template <typename T>
-Node<T>* Node<T>::getLeftChild(){
+BSTNode<T>* BSTNode<T>::getLeftChild(){
     return this -> leftChild;
 }
 
 template <typename T>
-Node<T>* Node<T>::getRightChild(){
+BSTNode<T>* BSTNode<T>::getRightChild(){
     return this -> rightChild;
 }
 
 template <typename T>
-T Node<T>::getData(){
+T BSTNode<T>::getData(){
     return data;
 }
 
 template <typename T>
-void Node<T>::setData(T data){
+void BSTNode<T>::setData(T data){
     this -> data = data;
 }
 
 template <typename T>
-void Node<T>::preOrder(){
+void BSTNode<T>::preOrder(){
     std::cout << this -> data << ", ";
     
     if(this -> leftChild != NULL){
@@ -80,7 +80,7 @@ void Node<T>::preOrder(){
 }
 
 template <typename T>
-void Node<T>::postOrder(){
+void BSTNode<T>::postOrder(){
     if(this -> leftChild != NULL){
         leftChild -> postOrder();
     }
@@ -93,7 +93,7 @@ void Node<T>::postOrder(){
 }
 
 template <typename T>
-void Node<T>::inOrder(){    
+void BSTNode<T>::inOrder(){
     if(this -> leftChild != NULL){
         leftChild -> inOrder();
     }
