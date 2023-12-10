@@ -1,8 +1,14 @@
+//
+// Created by vicky on 10-12-2023.
+//
+
+#ifndef LAB_STACK_APPLICATIONS_H
+#define LAB_STACK_APPLICATIONS_H
+
 #include "include/Stack/stack.h"
 
-#ifndef POST
-#define POST
-int pred(char op){
+
+int __pred(char op){
     if(op == '^')
         return 2;
     if(op == '*' || op == '/')
@@ -10,6 +16,23 @@ int pred(char op){
     if(op == '+' || op == '-')
         return 0;
     return  -1;
+}
+
+char __match(char bracket){
+    if (bracket == '(')
+        return ')';
+    else if (bracket == '[')
+        return ']';
+    else if (bracket == '{')
+        return '}';
+    else
+        return '\0';
+}
+
+bool __is_bracket(char symbol){
+    if (symbol == '(' || symbol == '[' || symbol == '{' || symbol == ')' || symbol == ']' || symbol == '}')
+        return true;
+    return  false;
 }
 
 std::string postfix(std::string expr){
@@ -31,7 +54,7 @@ std::string postfix(std::string expr){
             stack.pop();
         }
         else if(c == '^' || c == '*' || c == '/' || c == '+' || c == '-') {
-            while(!stack.isEmpty() && pred(c) <= pred(stack.get())){
+            while(!stack.isEmpty() && __pred(c) <= __pred(stack.get())){
                 output += stack.pop();
             }
             stack.push(c);
@@ -70,4 +93,53 @@ void infix(std::string expr){
     std::cout << stack.pop() << std::endl;
 }
 
-#endif
+bool bracketMatching(std::string expr){
+    Stack<char> stack;
+
+    for(auto _char:expr){
+        if(!__is_bracket(_char)){
+            continue;
+        }
+        if (_char == '(' || _char == '[' || _char == '{'){
+            stack.push(_char);
+        }
+        else{
+            if(__match(stack.get()) == _char){
+                stack.pop();
+            }
+            else{
+                std::cout << "Was expecting " << __match(stack.get()) << " but got " << _char << std::endl;
+                return  false;
+            }
+        }
+    }
+    return  true;
+}
+
+template <typename T>
+Stack<T>* stackSort(Stack<T> s){
+    const int tarSize = s.getStackSize();
+
+    Stack<T>* s1 = new Stack<T>;
+    T tmp;
+
+    tmp = s.pop();
+    s1 -> push(tmp);
+    tmp = s.pop();
+
+    while(s1 -> getStackSize() != tarSize){
+        if(s1 -> isEmpty() || tmp >= s1 -> get()){
+            s1 -> push(tmp);
+            tmp = s.pop();
+        }
+        else{
+            s.push(s1 -> pop());
+        }
+    }
+
+    return s1;
+}
+
+
+
+#endif //LAB_STACK_APPLICATIONS_H
