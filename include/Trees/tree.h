@@ -25,13 +25,19 @@ public:
     inline T getElement(int);
 
     virtual void addElement(T);
-    virtual void addElements(T*);
+    virtual void addElements(T*,int);
     virtual T pop();
 
     void print();
     inline int getCapacity();
     inline int getSize();
 };
+
+template<typename T>
+void Tree<T>::addElements(T * data, int si) {
+    for(int i = 0; i < si; ++i)
+        addElement(data[i]);
+}
 
 
 template <typename T>

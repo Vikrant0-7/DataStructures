@@ -13,10 +13,18 @@ class MinTree : public Tree<T>{
     public:
         MinTree();
         void addElement(T);
+        void addElement(T*,int);
         void convert(Tree<T>*);
         T pop();
 
 };
+
+template<typename T>
+void MinTree<T>::addElement(T * data, int si) {
+    for(int i = 0; i < si; ++i){
+        this ->addElement(data[i]);
+    }
+}
 
 //climbs up the hierarchy till current node is greater than parent
 template <typename T>
