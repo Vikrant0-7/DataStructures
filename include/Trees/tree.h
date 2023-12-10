@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 
 #ifndef TREE_H
 #define TREE_H
@@ -110,18 +111,18 @@ void Tree<T>::print()
 
     int idx = 0;
     for(int i = 0; i < height + 1; ++i){
-        int padding = (int)pow(2,height-i-1);
+        int padding = (int)pow(2,height-i);
 
         for(int row = 0; row < pow(2,i); ++row){
             for(int j = 0; j < padding - 1; ++j){
-                std::cout << " ";
+                std::cout << "    ";
             }
             if(idx >= this -> size)
                 return;
-            std::cout << idx[items];
+            std::cout << std::setw(4) << idx[items];
             ++idx;
             for(int j = 0; j < padding; ++j){
-                std::cout << " ";
+                std::cout << "    ";
             }
         }
         std::cout << "\n";
