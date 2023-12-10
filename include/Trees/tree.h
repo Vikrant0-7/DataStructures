@@ -109,7 +109,7 @@ void Tree<T>::print()
 {
 
     int idx = 0;
-    for(int i = 0; i < height; ++i){
+    for(int i = 0; i < height + 1; ++i){
         int padding = (int)pow(2,height-i-1);
 
         for(int row = 0; row < pow(2,i); ++row){
